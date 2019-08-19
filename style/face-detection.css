@@ -1,0 +1,149 @@
+  #webcam-container {
+    padding: 0;
+  }
+  
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  video {
+    background: black;
+    width: 100%   !important;
+    height: auto  !important;
+    margin: 0;
+    border: 0px;
+  }
+
+  #cameraFlip {
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    position: absolute;
+    cursor: pointer;
+    background-color: transparent;
+    background-position : center center;
+    background-repeat:no-repeat;
+    background-image : url(../images/camera_flip.png);
+  }
+
+  .progress-bar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+    opacity: 0.8;   
+  }
+
+  .progress-bar {
+    font-size: 16px;
+    position:relative;
+    top: 45%;
+    width: 95%;
+    margin: auto;
+    height: 30px;
+    z-index:300000;
+  }
+
+  .spinner-border {
+    position: relative;
+    top: 40%;
+    width: 80px;
+    height: 80px;
+    color: white;
+  }
+
+  @media screen and (max-width: 575px) {
+    .form-control {
+      height: 40px;
+      margin-bottom: 5px;
+      padding: 15px 0px 15px 10px;
+      border: 0px;
+    }
+  }
+  @media screen and (min-width: 576px) {
+    .form-control {
+      padding-top: 15px;
+      padding-bottom: 15px;
+      height: 60px;
+      margin-bottom: 5px; 
+    }
+  }
+
+  .camerasList {
+    width: 90%;
+  }
+
+  .form-switch {
+    display: inline-block;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .form-switch i {
+    position: relative;
+    display: inline-block;
+    margin-right: .5rem;
+    width: 46px;
+    height: 26px;
+    background-color: #e6e6e6;
+    border-radius: 23px;
+    vertical-align: text-bottom;
+    transition: all 0.3s linear;
+  }
+  
+  .form-switch i::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 42px;
+    height: 22px;
+    background-color: #fff;
+    border-radius: 11px;
+    transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+    transition: all 0.25s linear;
+  }
+  
+  .form-switch i::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    border-radius: 11px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+    transform: translate3d(2px, 2px, 0);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .form-switch:active i::after {
+    width: 28px;
+    transform: translate3d(2px, 2px, 0);
+  }
+  
+  .form-switch:active input:checked + i::after { transform: translate3d(16px, 2px, 0); }
+  
+  .form-switch input { display: none; }
+  
+  .form-switch input:checked + i { background-color: #4BD763; }
+  
+  .form-switch input:checked + i::before { transform: translate3d(18px, 2px, 0) scale3d(0, 0, 0); }
+  
+  .form-switch input:checked + i::after { transform: translate3d(22px, 2px, 0); }
+
+  .form-switch input:disabled + i { background-color: #eeeeee; cursor: not-allowed; }
+
+  .form-switch input:disabled + i::after {
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.10);
+  }
+
+  .disabled {
+      color: #aaa;
+      cursor: not-allowed;
+  }
