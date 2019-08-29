@@ -69,7 +69,7 @@ $("#model-switch").change(function () {
 
 $("#detection-switch").change(function () {
   if(this.checked){
-    createConvas();
+    createCanvas();
     toggleContrl("box-switch", true);
     toggleContrl("landmarks-switch", true);
     toggleContrl("expression-switch", true);
@@ -92,7 +92,7 @@ $("#detection-switch").change(function () {
   }        
 });
 
-function createConvas(){
+function createCanvas(){
   if( document.getElementsByTagName("canvas").length == 0 )
   {
     canvas = faceapi.createCanvasFromMedia(camera)
