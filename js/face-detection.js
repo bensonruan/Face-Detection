@@ -1,82 +1,59 @@
-const camera = document.getElementById('webcam');
+const webcamElement = document.getElementById('webcam');
+const webcam = new Webcam(webcamElement, 'user');
 const modelPath = 'models';
 let currentStream;
 let displaySize;
 let convas;
 let faceDetection;
-let deviceIds = [];
-let selectedDevice;
-
 
 $("#webcam-switch").change(function () {
   if(this.checked){
-    if (navigator.mediaDevices) {
-      navigator.mediaDevices.enumerateDevices().then(function(devices){
-        if(getDevices(devices)){
-          if(deviceIds.length>1){
-            selectedDevice = deviceIds[1];
-          }else{
-            selectedDevice = deviceIds[0];
-          }
-          startCamera();
-        }else{
-          alert('No camera detected');
-        }
-      });
-    }else{
-      alert("Fail to start webcam");
-    }  
+      webcam.start()
+          .then(result =>{
+             cameraStarted();
+             webcamElement.style.transform = "";
+             console.log("webcam started");
+          })
+          .catch(err => {
+              displayError();
+          });
   }
-  else {
-    stopMediaTracks(currentStream);
-    toggleContrl("model-switch", false);
-    $("#cameraFlip").addClass('d-none');
+  else {        
+      cameraStopped();
+      webcam.stop();
+      console.log("webcam stopped");
   }        
 });
 
 $('#cameraFlip').click(function() {
-  $.each(deviceIds, function( index, value ) {
-    if(value!=selectedDevice){
-      selectedDevice = value;
-      startCamera();
-      return false;
-    }
-  });
+    webcam.flip();
+    webcam.start()
+    .then(result =>{ 
+      webcamElement.style.transform = "";
+    });
 });
 
 $("#webcam").bind("loadedmetadata", function () {
   displaySize = { width:this.scrollWidth, height: this.scrollHeight }
 });
 
-$("#model-switch").change(function () {
-  if(this.checked){
-    $(".progress-bar").removeClass('d-none');
-    Promise.all([
-      faceapi.nets.tinyFaceDetector.load(modelPath),
-      faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-      faceapi.nets.faceRecognitionNet.load(modelPath),
-      faceapi.nets.faceExpressionNet.load(modelPath),
-      faceapi.nets.ageGenderNet.load(modelPath)
-    ]).then(function(){
-      $(".progress-bar").addClass('d-none');
-      toggleContrl("detection-switch", true);
-    })
-  }
-  else {
-    toggleContrl("detection-switch", false);
-  }        
-});
-
 $("#detection-switch").change(function () {
   if(this.checked){
-    createCanvas();
     toggleContrl("box-switch", true);
     toggleContrl("landmarks-switch", true);
     toggleContrl("expression-switch", true);
     toggleContrl("age-gender-switch", true);
     $("#box-switch").prop('checked', true);
-    $(".spinner-border").removeClass('d-none');
-    startDetection();
+    $(".loading").removeClass('d-none');
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.load(modelPath),
+      faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+      faceapi.nets.faceExpressionNet.load(modelPath),
+      faceapi.nets.ageGenderNet.load(modelPath)
+    ]).then(function(){
+      createCanvas();
+      startDetection();
+    })
   }
   else {
     clearInterval(faceDetection);
@@ -95,7 +72,7 @@ $("#detection-switch").change(function () {
 function createCanvas(){
   if( document.getElementsByTagName("canvas").length == 0 )
   {
-    canvas = faceapi.createCanvasFromMedia(camera)
+    canvas = faceapi.createCanvasFromMedia(webcamElement)
     document.getElementById('webcam-container').append(canvas)
     faceapi.matchDimensions(canvas, displaySize)
   }
@@ -112,58 +89,9 @@ function toggleContrl(id, show){
   }
 }
 
-function getDevices(mediaDevices) {
-  deviceIds = [];
-  let count = 0;
-  mediaDevices.forEach(mediaDevice => {
-    if (mediaDevice.kind === 'videoinput') {
-      deviceIds.push(mediaDevice.deviceId);
-      count = count + 1;
-    }
-  });
-  if(count>1){
-    $("#cameraFlip").removeClass('d-none');
-  }
-  return (count>0);
-}
-
-function startCamera(){
-  if (typeof currentStream !== 'undefined') {
-    stopMediaTracks(currentStream);
-  }
-  const videoConstraints = {};
-  if (selectedDevice === '') {
-    videoConstraints.facingMode = 'user';
-  } else {
-    videoConstraints.deviceId = { exact: selectedDevice};
-  }
-  const constraints = {
-    video: videoConstraints,
-    audio: false
-  };
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(stream => {
-      currentStream = stream;
-      camera.srcObject = stream;
-      toggleContrl("model-switch", true);
-      return navigator.mediaDevices.enumerateDevices();
-    })
-    .then(getDevices)
-    .catch(error => {
-        alert("Fail to start webcam");
-    });
-}
-
-function stopMediaTracks(stream) {
-  stream.getTracks().forEach(track => {
-    track.stop();
-  });
-}
-
 function startDetection(){
   faceDetection = setInterval(async () => {
-    const detections = await faceapi.detectAllFaces(camera, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceExpressions().withAgeAndGender()
+    const detections = await faceapi.detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceExpressions().withAgeAndGender()
     const resizedDetections = faceapi.resizeResults(detections, displaySize)
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     if($("#box-switch").is(":checked")){
@@ -187,8 +115,30 @@ function startDetection(){
         ).draw(canvas)
       })
     }
-    if(!$(".spinner-border").hasClass('d-none')){
-      $(".spinner-border").addClass('d-none')
+    
+    if(!$(".loading").hasClass('d-none')){
+      $(".loading").addClass('d-none')
     }
   }, 300)
+}
+
+function cameraStarted(){
+  toggleContrl("detection-switch", true);
+  $("#errorMsg").addClass("d-none");
+  if( webcam.webcamList.length > 1){
+    $("#cameraFlip").removeClass('d-none');
+  }
+}
+
+function cameraStopped(){
+  toggleContrl("detection-switch", false);
+  $("#errorMsg").addClass("d-none");
+  $("#cameraFlip").addClass('d-none');
+}
+
+function displayError(err = ''){
+  if(err!=''){
+      $("#errorMsg").html(err);
+  }
+  $("#errorMsg").removeClass("d-none");
 }

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style/face-detection.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src='js/face-api.min.js'></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
 </head>
 <body>
         <main>
@@ -21,11 +22,6 @@
                                         <input type="checkbox" id="webcam-switch">
                                         <i></i> Webcam </label>  
                                         <button id="cameraFlip" class="btn d-none"></button>     
-                                </div>
-                                <div class="col-md-10 col-6 form-control">
-                                        <label class="form-switch disabled">
-                                        <input type="checkbox" disabled id="model-switch">
-                                        <i></i> Load Model </label>      
                                 </div> 
                                 <div class="col-md-10 col-6 form-control">
                                         <label class="form-switch disabled">
@@ -58,14 +54,21 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-8 col-xl-9 align-top" id="webcam-container">
-                        <div class="progress-bar-container">
-                            <div class="progress progress-bar progress-bar-striped progress-bar-animated d-none">Loading Model</div>
-                            <div class="spinner-border d-none" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
+                        <div class="loading d-none">
+                                Loading Model
+                                <div class="spinner-border" role="status">
+                                        <span class="sr-only"></span>
+                                </div>
                         </div>
                         
-                        <video id="webcam" autoplay muted playsinline></video>
+                        <div id="video-container">
+                                <video id="webcam" autoplay muted playsinline></video>
+                        </div>  
+                        <div id="errorMsg" class="col-12 alert-danger d-none">
+                        Fail to start camera <br>
+                        1. Please allow permission to access camera. <br>
+                        2. If you are browsing through social media built in browsers, look for the ... or browser icon on the right top/bottom corner, and open the page in Sarafi (iPhone)/ Chrome (Android)
+                        </div>
                     </div>
                 </div>
             </div>

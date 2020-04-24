@@ -31,31 +31,30 @@
   .progress-bar-container {
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    filter: alpha(opacity=80);
-    -moz-opacity: 0.8;
-    opacity: 0.8;   
-  }
-
-  .progress-bar {
-    font-size: 16px;
-    position:relative;
-    top: 45%;
-    width: 95%;
+    right: 0;
+    z-index: 300000;
+    border: white 1px;
+    color: white;
+    padding: 75px 26px;
+    font-size: 22px;
     margin: auto;
-    height: 30px;
-    z-index:300000;
+    width: 200px;
+    height: 200px;
   }
 
   .spinner-border {
-    position: relative;
-    top: 40%;
-    width: 80px;
-    height: 80px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
     color: white;
+    z-index:300000;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+    opacity: 0.8;   
   }
 
   @media screen and (max-width: 575px) {
@@ -147,3 +146,11 @@
       color: #aaa;
       cursor: not-allowed;
   }
+
+  #errorMsg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    z-index: 999999;
+}
