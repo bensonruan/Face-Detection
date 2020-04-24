@@ -28,7 +28,7 @@
     background-image : url(../images/camera_flip.png);
   }
 
-  .progress-bar-container {
+  .loading{
     position: absolute;
     top: 0;
     bottom: 0;
